@@ -4,10 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>진영이꺼</title>
+    <title>회원가입</title>
 
-    <!-- icon -->
+    <!-- eye icon -->
     <script src='https://kit.fontawesome.com/a076d05399.js'></script>
+
+    <!-- warning icon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
     <!-- jQuery -->
     <script src="//code.jquery.com/jquery-3.1.1.slim.min.js"></script>
@@ -71,7 +74,7 @@
         }
 
         .formRow--input-wrapper.active .placeholder {
-            top: 0px;
+            top: -1px;
             /* left: 20px; */
             background-color: #ffffff;
             color: #1a73e8;
@@ -226,7 +229,15 @@
             display: none;
         }
 
-
+        .errorBox{
+            display: none;
+            /* display: block; */
+            margin-top: 5px;
+            margin-left: 15px;
+            font-size: 15px;
+            white-space:pre;
+            color: #d93025;
+        }
     </style>
 </head>
 <!-- <body align="center"> -->
@@ -247,26 +258,29 @@
                             <input type="email" class="formRow--input js-input eng" name="email"
                                 placeholder="이메일">
                         </div>
-                        <div class="break"></div>
+                        <!-- <div id="idErrorMsg" class="errorBox" ><i class="fa fa-warning"></i>  5~20자의 영문 소문자, 숫자와 특수기호(_),(-)만 사용 가능합니다.</div> -->
                         <div class="formRow--input-wrapper js-inputWrapper" id="verifyWrap">
                             <input type="text" class="formRow--input js-input" name="verify" placeholder="인증번호 입력">
                             <button type="button" id="btn_verify">인증번호 받기</button>
                         </div>
                     </div>
+                    
                     <!-- 비밀번호 -->
                     <div class="pwdWrap" >
                         <div class="formRow--input-wrapper js-inputWrapper pwd">
-                            <input type="password" class="formRow--input js-input" name="pwd" placeholder="비밀번호">
-                            <span class="error_next_box" id="pwdMsg" style="display: none;" aria-live="assertive">
-                                8~16자 영문 대 소문자, 숫자, 특수문자를 사용하세요.
-                            </span>
+                            <input type="password" class="formRow--input js-input" name="pwd" 
+                                    placeholder="비밀번호" onkeypress="javascript:capslock(event);">
                         </div>
                         <div class="formRow--input-wrapper js-inputWrapper pwd">
                             <input type="password" class="formRow--input js-input" name="pwdChk"
-                                placeholder="비밀번호 확인">
+                                placeholder="비밀번호 확인" onkeypress="javascript:capslock(event);">
                         </div>                        
                         <i class='far fa-eye-slash' id="showPwd"></i>
                     </div>
+                    <div id="capslockMsg" class="errorBox" ><i class="fa fa-warning"></i>  Caps Lock이 켜져있습니다.</div>
+                    <!-- <div class="error_next_box" id="pwdMsg" style="display: none;" aria-live="assertive">
+                        8~16자 영문 대 소문자, 숫자, 특수문자를 사용하세요.
+                    </div> -->
                     <!-- 이름 -->
                     <div class="formRow--input-wrapper js-inputWrapper">
                         <input type="text" class="formRow--input js-input" name="name" placeholder="이름">
@@ -280,7 +294,7 @@
                             </div>
                             <div class="formRow--input-wrapper js-inputWrapper" id="birthmm">
                                 <select class="formRow--input js-input" name="birthmm" placeholder="월">
-                                    <option></option>
+                                    <option hidden></option>
                                     <option value="1">1월</option>
                                     <option value="2">2월</option>
                                     <option value="3">3월</option>
@@ -323,17 +337,6 @@
             </div>
         </form>
     </div>
-    0001010
-    
-    123
-    
-        가나다
-
-        ㅁㄴㅇㄹㄴㄹㅁㄴ이런ㄹㅁㄴㅇㄹㅁㄴㅇㄹ
-        ㄴㅇㄹㅁㄴㅇㄹㄴㅇㄹ
-
-
-
     <script>
         // focus legend
         var $inputItem = $(".js-inputWrapper");
@@ -357,7 +360,6 @@
                 });
         });
 
-
         // view
         // $(document).ready(function(){
             $('.pwdWrap i').on('click',function(){
@@ -370,6 +372,54 @@
                     $('.pwdWrap input').attr('type','password');
                 }
             });
+        // });
+
+        // Caps Lock
+        function capslock(e){
+            var keyCode = 0;
+            var shirftKey = false;
+            keyCode = e.keyCode;
+            shiftKey = e.shiftKey;
+            if(((keyCode >= 65 && keyCode <90) && !shiftKey) || ((keyCode >= 97 && keyCode <= 112) && shiftKey)){
+                $("#capslockMsg").css("display","block");
+            }else{
+                $("#capslockMsg").css("display","none");
+            }
+        }
+
+        // 이메일 영어,숫자만 입력
+        $(document).ready(function(){
+            $("input[name=email]").keyup(function(event){ 
+                if (!(event.keyCode >=37 && event.keyCode<=40)) {
+                    var inputVal = $(this).val();
+                    // $("#idErrorMsg").css("display","block");
+                    $(this).val(inputVal.replace(/[^a-z0-9]/gi,''));
+                    $("#idErrorMsg").css("display","block");
+                }else{
+                    $("#idErrorMsg").css("display","none");
+                }
+            });
+        });
+
+        // 이름 한글만 입력
+        $(document).ready(function(){
+            $("input[name=name]").keyup(function(event){ 
+                if (!(event.keyCode >=37 && event.keyCode<=40)) {
+                    var inputVal = $(this).val();
+                    $(this).val(inputVal.replace(/[^ㄱ-힣]/gi,''));                
+                } 
+            });
+        });
+
+
+
+        // $(document).ready(function(){
+        //     $("input[name=password]").keyup(function(event){ 
+        //         if (!(event.keyCode >=37 && event.keyCode<=40)) {
+        //             var inputVal = $(this).val();
+        //             $(this).val(inputVal.replace(/[^ㄱ-힣]/gi, /[^a-z0-9]/gi));
+        //         }
+        //     });
         // });
     </script>
 </body>
