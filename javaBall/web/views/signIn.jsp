@@ -426,7 +426,7 @@
                 url : "/final/idDup.me",
                 type : "get",
                 data : {
-                    memId : $("input[name=email]").val()
+                    email : $("input[name=email]").val()
                 },
                 success : function(result){
                     console.log(result);
