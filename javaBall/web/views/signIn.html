@@ -419,13 +419,32 @@
         });
 
         function validate(){
+            // 이메일 중복 체크
+            let idDup = 0;
 
+            // $.ajax({
+            //     url : "/final/idDup.me",
+            //     type : "get",
+            //     data : {
+            //         email : $("input[name=email]").val()
+            //     },
+            //     success : function(result){
+            //         console.log(result);
+            //         idDup = result;
+            //     },
+            //     error : function(){
+            //         alert("아이디 중복 체크 실패!");
+            //     }
+            // })
+
+            // 이메일 공란 확인
             if ($("input[name=email]").val() == "" ){
                 $("#emailMsg").css("display","block").html('<i class="fa fa-warning"></i>  이메일을 입력하세요.');
                 return false;
             }
-            else if(){
-                $("#emailMsg").css("display","block").html('<i class="fa fa-warning"></i>  이메일을 입력하세요.');
+            // 이메일 중복 체크
+            else if(idDup > 0){
+                $("#emailMsg").css("display","block").html('<i class="fa fa-warning"></i>  이미 사용중이거나 탈퇴한 아이디입니다.');
                 return false;    
             }
         }
