@@ -249,7 +249,7 @@
 
     <!-- content -->
     <div class="content">
-        <form action="#" method="post" onsubmit="return validate()">
+        <form action="#" method="post" onsubmit="return validate()" >
             <div class="formRow">
                 <div class="formRow--item">
                     <!-- 이메일 -->
@@ -263,8 +263,7 @@
                             <input type="text" class="formRow--input js-input" name="verify" placeholder="인증번호 입력">
                             <button type="button" id="btn_verify">인증번호 받기</button>
                         </div>
-                        <div id="verifytMsg" class="msgBox" ><i class="fa fa-warning"></i>  인증번호를 입력하세요.</div>
-                        <!-- <div id="wrongNoMsg" class="msgBox" ><i class="fa fa-warning"></i>  인증번호를 확인하세요.</div> -->
+                        <div id="veriMsg" class="msgBox" ></div>
                     </div>
                     
                     <!-- 비밀번호 -->
@@ -340,6 +339,7 @@
             </div>
             <div class="btnArea">
                 <button type="submit" class="submitBtn">가입하기</button>
+                <!-- <input type="submit" class="submitBtn" value="가입하기"> -->
             </div>
             
         </form>
@@ -366,6 +366,23 @@
                     $this.addClass("active");
                 });
         });
+
+
+        // 엔터 클릭 시 submit 막기
+
+        // $('input[type="text"]').keydown(function() {
+        //     if (event.keyCode === 13) {
+        //         event.preventDefault();
+        //     };
+        // });
+
+        $('input[type="text"]').keypress(function(event){
+            var keycode = (event.keyCode ? event.keyCode : event.which);
+            if(keycode == '13'){
+                alert('가나');
+            }
+        }); 
+
 
         // view
         // $(document).ready(function(){
@@ -394,20 +411,6 @@
             }
         }
 
-        // 이메일 영어,숫자만 입력
-        $(document).ready(function(){
-            $("input[name=email]").keyup(function(event){ 
-                if (!(event.keyCode >=37 && event.keyCode<=40)) {
-                    var inputVal = $(this).val();
-                    // $("#idErrorMsg").css("display","block");
-                    $(this).val(inputVal.replace(/[^a-z0-9]/gi,''));
-                    $("#idErrorMsg").css("display","block");
-                }else{
-                    $("#idErrorMsg").css("display","none");
-                }
-            });
-        });
-
         // 이름 한글만 입력
         $(document).ready(function(){
             $("input[name=name]").keyup(function(event){ 
@@ -418,35 +421,78 @@
             });
         });
 
+        // 정규표현식
+        function chk(re, val, selector, msg){
+            if(!re.test(val)){                
+                selector.css("display","block").html('<i class="fa fa-warning"></i>  ' + msg);
+                return false;
+            }
+            return true;
+        }
+
+        // 유효성검사 에러메시지 
+        function displayErrorMsg(selector, msg){
+            selector.css("display","block").html('<i class="fa fa-warning"></i>  ' + msg);
+        }
+
+        // onsubmit 유효성 검사
         function validate(){
-            // 이메일 중복 체크
+            emailValidate();
+
+            verifyValidate();
+
+            
+
+
+        }
+
+        // 이메일 유효성 검사
+        function emailValidate(){ 
+            let emailVal = $("input[name=email]").val();  
             let idDup = 0;
 
-            // $.ajax({
-            //     url : "/final/idDup.me",
-            //     type : "get",
-            //     data : {
-            //         email : $("input[name=email]").val()
-            //     },
-            //     success : function(result){
-            //         console.log(result);
-            //         idDup = result;
-            //     },
-            //     error : function(){
-            //         alert("아이디 중복 체크 실패!");
-            //     }
-            // })
+            // 이메일 중복 체크용 ajax
+            /* $.ajax({
+                url : "/final/idDup.me",
+                type : "get",
+                data : {
+                    email : $("input[name=email]").val()
+                },
+                success : function(result){
+                    console.log(result);
+                    idDup = result;
+                },
+                error : function(){
+                    alert("아이디 중복 체크 실패!");
+                }
+            }) */
 
-            // 이메일 공란 확인
-            if ($("input[name=email]").val() == "" ){
-                $("#emailMsg").css("display","block").html('<i class="fa fa-warning"></i>  이메일을 입력하세요.');
+            // 이메일 미입력
+            if (emailVal == "" ){
+                displayErrorMsg($("#emailMsg"), '이메일을 입력하세요.');
+                return false;
+            }
+            // 이메일 정규표현식
+            else if(!chk(/^[\a-z0-9_-]{5,20}@[\a-zA-Z]+(\.[\a-zA-Z]+){1,2}$/, emailVal, $("#emailMsg"), "5~20자의 영문 소문자, 숫자와 특수기호(_),(-)만 사용 가능합니다.")){
                 return false;
             }
             // 이메일 중복 체크
             else if(idDup > 0){
-                $("#emailMsg").css("display","block").html('<i class="fa fa-warning"></i>  이미 사용중이거나 탈퇴한 아이디입니다.');
+                displayErrorMsg($("#emailMsg"), '이미 사용중이거나 탈퇴한 아이디입니다.');
                 return false;    
             }
+        }
+
+        // 인증번호 유효성 검사
+        function verifyValidate(){
+            let veriNo = $("input[name=verify]").val();  
+
+            if(veriNo == ""){
+                displayErrorMsg($('#veriMsg'), "인증번호를 입력하세요.")
+                return false
+            }
+            return true;
+
         }
 
 
