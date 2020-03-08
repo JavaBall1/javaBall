@@ -16,6 +16,13 @@
     <script src="//code.jquery.com/jquery-3.1.1.slim.min.js"></script>
 
     <style>
+        @import url('https://fonts.googleapis.com/css?family=Nanum+Gothic:400,700,800');
+
+        body{
+            font-family : 'Nanum Gothic';
+            /* font-weight: 700; */
+        }
+
         /* header */
         .header {
             position: relative;
@@ -234,6 +241,7 @@
             /* display: block; */
             margin-top: 5px;
             margin-left: 15px;
+            padding-bottom: 15px;
             font-size: 15px;
             white-space:pre;
             color: #d93025;
@@ -249,7 +257,7 @@
 
     <!-- content -->
     <div class="content">
-        <form action="#" method="post" onsubmit="return validate()" >
+        <form action="#" method="post" onsubmit="return validate()">
             <div class="formRow">
                 <div class="formRow--item">
                     <!-- 이메일 -->
@@ -278,10 +286,8 @@
                         </div>                        
                         <i class='far fa-eye-slash' id="showPwd"></i>
                     </div>
-                    <!-- <div id="capslockMsg" class="msgBox" ><i class="fa fa-warning"></i>  Caps Lock이 켜져있습니다.</div>
-                    <div id="pwdVacantMsg" class="msgBox" ><i class="fa fa-warning"></i>  비밀번호를 입력하세요.</div>
-                    <div id="pwdChkVacantMsg" class="msgBox" ><i class="fa fa-warning"></i>  비밀번호를 확인하세요.</div> -->
-                    <div id="pwdMsg" class="msgBox"><i class="fa fa-warning"></i>  8~16자 영문 대 소문자, 숫자, 특수문자를 사용하세요.</div>
+                    <div id="capslockMsg" class="msgBox"></div>
+                    <div id="pwdMsg" class="msgBox"></div>
 
                     <!-- 이름 -->
                     <div class="formRow--input-wrapper js-inputWrapper">
@@ -369,19 +375,11 @@
 
 
         // 엔터 클릭 시 submit 막기
-
-        // $('input[type="text"]').keydown(function() {
-        //     if (event.keyCode === 13) {
-        //         event.preventDefault();
-        //     };
-        // });
-
-        $('input[type="text"]').keypress(function(event){
-            var keycode = (event.keyCode ? event.keyCode : event.which);
-            if(keycode == '13'){
-                alert('가나');
-            }
-        }); 
+        $('form input').keydown(function(e) {
+           if (e.keyCode == 13) {
+               return false;
+           }
+        });
 
 
         // view
@@ -397,19 +395,6 @@
                 }
             });
         // });
-
-        // Caps Lock
-        function capslock(e){
-            var keyCode = 0;
-            var shirftKey = false;
-            keyCode = e.keyCode;
-            shiftKey = e.shiftKey;
-            if(((keyCode >= 65 && keyCode <90) && !shiftKey) || ((keyCode >= 97 && keyCode <= 112) && shiftKey)){
-                $("#capslockMsg").css("display","block");
-            }else{
-                $("#capslockMsg").css("display","none");
-            }
-        }
 
         // 이름 한글만 입력
         $(document).ready(function(){
@@ -435,14 +420,25 @@
             selector.css("display","block").html('<i class="fa fa-warning"></i>  ' + msg);
         }
 
-        // onsubmit 유효성 검사
+        // onsubmit 전체 유효성 검사
         function validate(){
             emailValidate();
-
             verifyValidate();
-
+            pwdValidate();
+            
+            return false;
             
 
+            // TODO $('.msgBox')가 켜져있을 경우 return false 되는 조건문 작성하기 (capslockMsg를 제외)
+            // $.each($('.msgBox'), function(index, item){
+            //     if(index.css('display') == 'block'){
+            //         return false;
+            //     }
+            // });
+
+            // if($('.msgBox').css('display') == block){
+            //     return false;
+            // }
 
         }
 
@@ -470,31 +466,102 @@
             // 이메일 미입력
             if (emailVal == "" ){
                 displayErrorMsg($("#emailMsg"), '이메일을 입력하세요.');
-                return false;
+                // return false;
             }
             // 이메일 정규표현식
             else if(!chk(/^[\a-z0-9_-]{5,20}@[\a-zA-Z]+(\.[\a-zA-Z]+){1,2}$/, emailVal, $("#emailMsg"), "5~20자의 영문 소문자, 숫자와 특수기호(_),(-)만 사용 가능합니다.")){
-                return false;
+                // return false;
             }
-            // 이메일 중복 체크
+            // TODO 이메일 중복 체크
             else if(idDup > 0){
                 displayErrorMsg($("#emailMsg"), '이미 사용중이거나 탈퇴한 아이디입니다.');
-                return false;    
+                // return false;    
+            }else{
+                $("#emailMsg").css("display","none");
             }
+
         }
 
         // 인증번호 유효성 검사
         function verifyValidate(){
             let veriNo = $("input[name=verify]").val();  
 
+            // 인증번호 미입력
             if(veriNo == ""){
                 displayErrorMsg($('#veriMsg'), "인증번호를 입력하세요.")
-                return false
+                // return false
+            }else{
+                $("#veriMsg").css("display","none");
             }
-            return true;
+
+            // TODO 인증번호 확인
+            // else if{
+
+            // }
+            // return true;
 
         }
 
+        // <div id="pwdVacantMsg" class="msgBox" ><i class="fa fa-warning"></i>  비밀번호를 입력하세요.</div>
+        // <div id="pwdChkVacantMsg" class="msgBox" ><i class="fa fa-warning"></i>  비밀번호를 확인하세요.</div> 
+        // <div id="pwdMsg" class="msgBox"><i class="fa fa-warning"></i>  8~16자 영문 대 소문자, 숫자, 특수문자를 사용하세요.</div>
+
+        // 비밀번호 유효성 검사
+        function pwdValidate(){
+            let pwdVal = $("input[name=pwd]").val();
+            let pwdChkVal = $("input[name=pwdChk]").val()
+
+            // 비밀번호 미입력
+            if(pwdVal == ""){
+                displayErrorMsg($('#pwdMsg'), "비밀번호를 입력하세요.")
+                // return false;
+            }
+
+            // 비밀번호 정규표현식 
+            else if(!chk(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,16}$/, pwdVal, $("#pwdMsg"), "8~16자 영문 대 소문자, 숫자, 특수문자(#?!@$%^&*-)를 사용하세요.")){
+                // (?=            -->  positive lookahed(전방 탐색) : Matches a group after 'the main expression' without including it in the result
+                //                          TODO what is the main expression? 
+                // .*?            -->  non-greedy : will search for a match using as few characters as possible
+                // (?=.*?[A-Z])   -->  A-Z 중 하나 이상
+                // .              -->  wildcard : Matches any character cept line breaks
+                // {8,20}         -->  8자 이상 20자 이하
+            }    
+
+            // 비밀번호 확인 미입력
+            else if(pwdChkVal == ""){
+                displayErrorMsg($('#pwdMsg'), "비밀번호를 확인하세요.")
+                // return false;
+            }
+
+            // 비밀번호 불일치 
+            else if(pwdVal != pwdChkVal){
+                displayErrorMsg($('#pwdMsg'), "비밀번호가 일치하지 않습니다.")
+                // return false;
+            }else{
+                $("#pwdMsg").css("display","none");
+            }
+            // return true;
+
+
+        }
+
+        // Caps Lock
+        function capslock(e){
+            var keyCode = 0;
+            var shirftKey = false;
+            keyCode = e.keyCode;
+            shiftKey = e.shiftKey;
+            if(((keyCode >= 65 && keyCode <90) && !shiftKey) || ((keyCode >= 97 && keyCode <= 112) && shiftKey)){
+                displayErrorMsg($('#pwdMsg'), "Caps Lock이 켜져있습니다.")
+            }else{
+                $("#pwdMsg").css("display","none");
+            }
+        }
+
+        // focusout시 capslockMsg 제거 
+        $("input[type=password]").focusout(function(){
+            $("#pwdMsg").css("display","none");
+        })
 
 
 
