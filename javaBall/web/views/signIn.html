@@ -99,10 +99,7 @@
         }
 
         /* .formRow--input-wrapper .formRow--input:hover,  */
-        .formRow--input-wrapper .formRow--input:focus{
-            /* border-color: #1a73e8; */
-            /* border: 1px #1a73e8 solid; */
-        }
+        /* .formRow--input-wrapper .formRow--input:focus{} */
 
         /* .formRow .placeholder { */
         .placeholder {
@@ -156,13 +153,12 @@
 
         .birthDiv {
             margin-top: 13px;
-            /* text-align: left; */
         }
 
         .birthDiv label {
-            /* margin : 0px, 0px, 100px, 7px; */
             margin-left: 7px;
             margin-bottom: 7px;
+            display :inline-block;
         }
 
         .birthWrap {
@@ -273,8 +269,7 @@
                             <button type="button" id="btn_verify">인증번호 받기</button>
                         </div>
                         <div id="veriMsg" class="msgBox" ></div>
-                    </div>
-                    
+                    </div>       
                     <!-- 비밀번호 -->
                     <div class="pwdWrap" >
                         <div class="formRow--input-wrapper js-inputWrapper pwd">
@@ -289,7 +284,6 @@
                     </div>
                     <div id="capslockMsg" class="msgBox"></div>
                     <div id="pwdMsg" class="msgBox"></div>
-
                     <!-- 이름 -->
                     <div class="formRow--input-wrapper js-inputWrapper">
                         <input type="text" class="formRow--input js-input" name="name" placeholder="이름">
@@ -372,27 +366,12 @@
                 });
         });
 
-
         // 엔터 클릭 시 submit 막기
         $('form input').keydown(function(e) {
            if (e.keyCode == 13) {
                return false;
            }
         });
-
-        // view
-        // $(document).ready(function(){
-            $('.pwdWrap i').on('click',function(){
-                $('.pwdWrap input').toggleClass('showPwd');
-                if($('.pwdWrap input').hasClass('showPwd')){
-                    $(this).attr('class',"far fa-eye");
-                    $('.pwdWrap input').attr('type','text');
-                }else{
-                    $(this).attr('class',"far fa-eye-slash");
-                    $('.pwdWrap input').attr('type','password');
-                }
-            });
-        // });
 
         // 정규표현식
         function chk(re, val, selector, msg){
@@ -414,6 +393,7 @@
             verifyValidate();
             pwdValidate();
             nameValidate();
+            birtyyValidate();
             
             return false;
             
@@ -543,15 +523,21 @@
         }
 
         // 생년월일 유효성 검사
-        // 년도
+        
         function birtyyValidate(){
-             if($('input[name=birthyy]').val() == null){
-                $('#nameMsg').css('display','none');
+            // 연도
+            if($('input[name=birthyy]').val() == ""){
+                displayErrorMsg($('#birthMsg'), "출생연도 4자를 입력하세요.");
+            }
+            // TODO 연도 유효성 검사
+            else if(!chk(/[0-9]{0,4}/), $('input[name=birthyy]').val(), $('#birthMsg'), "출생연도 4자를 정확히 입력하세요."){
 
-                // <i class="fa fa-warning"></i>  출생 년도 4자를 입력하세요.
-             }
+            }
+            // 월
+            // else if($('input[name=birthmm]').val() == ""){
+            //     displayErrorMsg($('#birthMsg'), "출생 월을 입력하세요.");
+            // }
         }
-
 
         // 비밀번호 Caps Lock
         function capslock(e){
@@ -572,36 +558,41 @@
         })
 
         // 비밀번호 영문만 입력
-        $(document).ready(function(){
-            $("input[type=password]").keyup(function(event){ 
-                if (!(event.keyCode >=37 && event.keyCode<=40)) {
-                    var inputVal = $(this).val();
-                    $(this).val(inputVal.replace(/[^a-zA-Z0-9#?!@$%^&*]/gi,''));
-                }
-            });
+        $("input[type=password]").keyup(function(event){ 
+            if (!(event.keyCode >=37 && event.keyCode<=40)) {
+                var inputVal = $(this).val();
+                $(this).val(inputVal.replace(/[^a-zA-Z0-9#?!@$%^&*]/gi,''));
+            }
         });
-      
+    
+        // 비밀번호 확인
+        $('.pwdWrap i').on('click',function(){
+            $('.pwdWrap input').toggleClass('showPwd');
+            if($('.pwdWrap input').hasClass('showPwd')){
+                $(this).attr('class',"far fa-eye");
+                $('.pwdWrap input').attr('type','text');
+            }else{
+                $(this).attr('class',"far fa-eye-slash");
+                $('.pwdWrap input').attr('type','password');
+            }
+        });
+
         // 이름 한글만 입력
-        $(document).ready(function(){
-            $("input[name=name]").keyup(function(event){ 
-                if (!(event.keyCode >=37 && event.keyCode<=40)) {
-                    var inputVal = $(this).val();
-                    $(this).val(inputVal.replace(/[^ㄱ-힣]/gi,''));                
-                } 
-            });
+        $("input[name=name]").keyup(function(event){ 
+            if (!(event.keyCode >=37 && event.keyCode<=40)) {
+                var inputVal = $(this).val();
+                $(this).val(inputVal.replace(/[^ㄱ-힣]/gi,''));                
+            } 
         });
 
         // 연도, 일 숫자만 입력
-        $(document).ready(function(){
-
-            // $(".birth").keyup(function(event){ 
-            $("input[name=birthyy], input[name=birthyy]").keyup(function(event){ 
-                if (!(event.keyCode >=37 && event.keyCode<=40)) {
-                    var inputVal = $(this).val();
-                    $(this).val(inputVal.replace(/[^0-9]/gi,''));                
-                } 
-            });
+        $("input[name=birthyy], input[name=birthdd]").keyup(function(event){ 
+            if (!(event.keyCode >=37 && event.keyCode<=40)) {
+                var inputVal = $(this).val();
+                $(this).val(inputVal.replace(/[^0-9]/gi,''));                
+            } 
         });
+        
 
 
     </script>
